@@ -91,8 +91,21 @@ class Board():
         # selecting the piece to be moved
         piece = input("Select a position to move: ")
         if self.grid[piece].occupied:
+            # finding all occupied spaces on the board
+            self.occupied = []
+            for id in spaceIDsSingleton.layout:
+                for i in id:
+                    if self.grid[i].occupied:
+                        self.occupied.append(i)
             # finding the available spaces for the piece
-            self.grid[piece].findAvailable()
+            self.grid[piece].findAvailable(self.occupied)
+            # removing all occupied spaces from the available spaces list
+            for id in self.occupied:
+                if id in self.grid[piece].piece.availableSpaces:
+                    self.grid[piece].piece.availableSpaces.remove(id)
+            # print statements for testing
+            print("Available Spaces:",end=' ')
+            print(self.grid[piece].piece.availableSpaces)
             # getting the new position for the piece
             newPos = input("Enter a new position: ")
             if newPos in self.grid[piece].piece.availableSpaces:
@@ -102,11 +115,11 @@ class Board():
                 self.grid[newPos].occupied = True
                 self.grid[piece].piece = ''
                 self.grid[piece].occupied = False
-                self.grid[newPos].piece.availableSpaces.clear()
             else:
                 print("Invalid move!")
         else:
             print("Invalid piece selected!")
+        self.grid[newPos].piece.availableSpaces.clear()
 
 if __name__ == '__main__':
     board = Board()
